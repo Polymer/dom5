@@ -56,6 +56,25 @@ function removeAttribute(element, name) {
   }
 }
 
+function getTextContent(element) {
+  var content = '';
+  for (var child of element.childNodes) {
+    if (child.nodeName === '#text') {
+      content += child.value;
+    } else {
+      content += getTextContent(child);
+    }
+  }
+  return content;
+}
+
+function setTextContent(element, value) {
+  console.assert(typeof value === 'string');
+  element.childNodes = [
+    {nodeName: '#text', value: value},
+  ];
+}
+
 function hasTagName(name) {
   var n = name.toLowerCase();
   return function(node) {
@@ -293,6 +312,8 @@ module.exports = {
   hasAttribute: hasAttribute,
   setAttribute: setAttribute,
   removeAttribute: removeAttribute,
+  getTextContent: getTextContent,
+  setTextContent: setTextContent,
   isElement: isElement,
   isTextNode: isTextNode,
   isCommentNode: isCommentNode,
