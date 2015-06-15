@@ -339,19 +339,62 @@ function nodeWalkAll(node, predicate, matches) {
   return matches;
 }
 
+function _reverseNodeWalk(node, predicate, matches) {
+  var match = null;
+  if (node.childNodes) {
+    for (var i = node.childNodes.length - 1; i >= 0; i--) {
+      match = _reverseNodeWalk(node.childNodes[i], predicate);
+      if (match) {
+        return match;
+      }
+    }
+  }
+  if (!match && predicate(node)) {
+    match = node;
+  }
+  return match;
+}
+
 function _reverseNodeWalkAll(node, predicate, matches) {
   if (!matches) {
     matches = [];
   }
   if (node.childNodes) {
     for (var i = node.childNodes.length - 1; i >= 0; i--) {
-      nodeWalkAll(node.childNodes[i], predicate, matches);
+      _reverseNodeWalkAll(node.childNodes[i], predicate, matches);
     }
   }
   if (predicate(node)) {
     matches.push(node);
   }
   return matches;
+}
+
+/**
+ * Equivalent to `nodeWalk`, but only returns nodes that are either 
+ * ancestors or earlier cousins/siblings in the document.
+ *
+ * Nodes are returned in reverse document order, starting from `node`.
+ */
+function nodeWalkPrior(node, predicate) {
+  if (predicate(node)) {
+    return node;
+  }
+  // Search our earlier siblings and their descendents.
+  var match = null;
+  var parent = node.parentNode;
+  if (parent) {
+    var idx = parent.childNodes.indexOf(node);
+    var siblings = parent.childNodes.slice(0, idx);
+    for (var i = siblings.length-1; i >= 0; i--) {
+      match = _reverseNodeWalk(siblings[i], predicate);
+      if (match) {
+        return match;
+      }
+    }
+    match = nodeWalkPrior(parent, predicate);
+  }
+  return match;
 }
 
 /**
@@ -490,6 +533,7 @@ module.exports = {
   query: query,
   queryAll: queryAll,
   nodeWalk: nodeWalk,
+  nodeWalkPrior: nodeWalkPrior,
   nodeWalkAll: nodeWalkAll,
   nodeWalkAllPrior: nodeWalkAllPrior,
   treeMap: treeMap,
