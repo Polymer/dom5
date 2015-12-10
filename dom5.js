@@ -537,18 +537,15 @@ function append(parent, newNode) {
 
 var parse5 = require('parse5');
 function parse(text, options) {
-  var parser = new parse5.Parser(parse5.TreeAdapters.default, options);
-  return parser.parse(text);
+  return parse5.parse(text, options);
 }
 
 function parseFragment(text) {
-  var parser = new parse5.Parser();
-  return parser.parseFragment(text);
+  return parse5.parseFragment(text);
 }
 
 function serialize(ast) {
-  var serializer = new parse5.Serializer();
-  return serializer.serialize(ast);
+  return parse5.serialize(ast);
 }
 
 module.exports = {
