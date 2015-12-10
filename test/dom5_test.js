@@ -21,33 +21,30 @@ suite('dom5', function() {
     var parse5 = require('parse5');
     var docText = "<!DOCTYPE html><div id='A' qux>a1<div bar='b1' bar='b2'>b1</div>a2</div><!-- comment -->";
     var fragText = '<template><span>Foo</span></template><!-- comment --><my-bar></my-bar>';
-    var parser = new parse5.Parser();
 
     test('parse', function() {
-      var doc_expected = parser.parse(docText);
+      var doc_expected = parse5.parse(docText);
       var doc_actual = dom5.parse(docText);
 
       assert.deepEqual(doc_expected, doc_actual);
     });
 
     test('parseFragment', function() {
-      var frag_expected = parser.parseFragment(fragText);
+      var frag_expected = parse5.parseFragment(fragText);
       var frag_actual = dom5.parseFragment(fragText);
 
       assert.deepEqual(frag_expected, frag_actual);
     });
 
     test('serialize', function() {
-      var serializer = new parse5.Serializer();
-
-      var ast = parser.parse(docText);
-      var expected = serializer.serialize(ast);
+      var ast = parse5.parse(docText);
+      var expected = parse5.serialize(ast);
       var actual = dom5.serialize(ast);
 
       assert.equal(expected, actual);
 
-      ast = parser.parseFragment(fragText);
-      expected = serializer.serialize(ast);
+      ast = parse5.parseFragment(fragText);
+      expected = parse5.serialize(ast);
       actual = dom5.serialize(ast);
 
       assert.equal(expected, actual);
