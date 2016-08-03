@@ -11,7 +11,26 @@
 // jshint node: true
 'use strict';
 
-var cloneObject = require('clone');
+declare module 'parse5' {
+  interface TreeAdapter {
+
+  }
+  export class Parser {
+    constructor(treeAdapter?: TreeAdapter, options?: ParserOptions);
+    parse(html: string): ASTNode;
+    parseFragment(html: string): ASTNode;
+  }
+  export class Serializer {
+    constructor();
+    serialize(node: ASTNode): string;
+  }
+  export const TreeAdapters: {
+    default: TreeAdapter;
+  }
+}
+
+import * as cloneObject from 'clone';
+import * as parse5 from 'parse5';
 
 function getAttributeIndex(element, name) {
   if (!element.attrs) {
@@ -30,14 +49,14 @@ function getAttributeIndex(element, name) {
  * @returns {boolean} `true` iff [element] has the attribute [name], `false`
  *   otherwise.
  */
-function hasAttribute(element, name) {
+export function hasAttribute(element, name) {
   return getAttributeIndex(element, name) !== -1;
 }
 
 /**
  * @returns {string|null} The string value of attribute `name`, or `null`.
  */
-function getAttribute(element, name) {
+export function getAttribute(element, name) {
   var i = getAttributeIndex(element, name);
   if (i > -1) {
     return element.attrs[i].value;
@@ -45,7 +64,7 @@ function getAttribute(element, name) {
   return null;
 }
 
-function setAttribute(element, name, value) {
+export function setAttribute(element, name, value) {
   var i = getAttributeIndex(element, name);
   if (i > -1) {
     element.attrs[i].value = value;
@@ -54,7 +73,7 @@ function setAttribute(element, name, value) {
   }
 }
 
-function removeAttribute(element, name) {
+export function removeAttribute(element, name) {
   var i = getAttributeIndex(element, name);
   if (i > -1) {
     element.attrs.splice(i, 1);
@@ -117,7 +136,7 @@ function collapseTextRange(parent, start, end) {
  * Equivalent to `element.normalize()` in the browser
  * See https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
  */
-function normalize(node) {
+export function normalize(node) {
   if (!(isElement(node) || isDocument(node) || isDocumentFragment(node))) {
     return;
   }
@@ -149,7 +168,7 @@ function normalize(node) {
  *
  * Equivalent to `node.textContent` in the browser
  */
-function getTextContent(node) {
+export function getTextContent(node) {
   if (isCommentNode(node)) {
     return node.data;
   }
@@ -165,7 +184,7 @@ function getTextContent(node) {
  *
  * Equivalent to `node.textContent = value` in the browser
  */
-function setTextContent(node, value) {
+export function setTextContent(node, value) {
   if (isCommentNode(node)) {
     node.data = value;
   } else if (isTextNode(node)) {
@@ -189,6 +208,8 @@ function hasTextValue(value) {
   };
 }
 
+export type Predicate = (node: parse5.ASTNode) => boolean;
+
 /**
  * OR an array of predicates
  */
@@ -210,6 +231,7 @@ function OR(/* ...rules */) {
 /**
  * AND an array of predicates
  */
+function AND(...Predicate):Predicate;
 function AND(/* ...rules */) {
   var rules = new Array(arguments.length);
   for (var i = 0; i < arguments.length; i++) {
@@ -262,23 +284,23 @@ function hasAttrValue(attr, value) {
   };
 }
 
-function isDocument(node) {
+export function isDocument(node) {
   return node.nodeName === '#document';
 }
 
-function isDocumentFragment(node) {
+export function isDocumentFragment(node) {
   return node.nodeName === '#document-fragment';
 }
 
-function isElement(node) {
+export function isElement(node) {
   return node.nodeName === node.tagName;
 }
 
-function isTextNode(node) {
+export function isTextNode(node) {
   return node.nodeName === '#text';
 }
 
-function isCommentNode(node) {
+export function isCommentNode(node) {
   return node.nodeName === '#comment';
 }
 
@@ -287,7 +309,7 @@ function isCommentNode(node) {
  * list of results.
  * @return {Array}
  */
-function treeMap(node, mapfn) {
+export function treeMap(node, mapfn) {
   var results = [];
   nodeWalk(node, function(node){
     results = results.concat(mapfn(node));
@@ -303,7 +325,7 @@ function treeMap(node, mapfn) {
  * @returns {Node} `null` if no node matches, parse5 node object if a node
  * matches
  */
-function nodeWalk(node, predicate) {
+export function nodeWalk(node, predicate) {
   if (predicate(node)) {
     return node;
   }
@@ -326,7 +348,7 @@ function nodeWalk(node, predicate) {
  *
  * @returns {Array[Node]}
  */
-function nodeWalkAll(node, predicate, matches) {
+export function nodeWalkAll(node, predicate, matches?: parse5.ASTNode[]) {
   if (!matches) {
     matches = [];
   }
@@ -363,7 +385,7 @@ function _reverseNodeWalkAll(node, predicate, matches) {
  * Nodes are searched in reverse document order, starting from the sibling
  * prior to `node`.
  */
-function nodeWalkPrior(node, predicate) {
+export function nodeWalkPrior(node, predicate) {
   // Search our earlier siblings and their descendents.
   var parent = node.parentNode;
   if (parent) {
@@ -390,7 +412,7 @@ function nodeWalkPrior(node, predicate) {
  *
  * Nodes are returned in reverse document order, starting from `node`.
  */
-function nodeWalkAllPrior(node, predicate, matches) {
+export function nodeWalkAllPrior(node, predicate, matches) {
   if (!matches) {
     matches = [];
   }
@@ -415,7 +437,7 @@ function nodeWalkAllPrior(node, predicate, matches) {
  *
  * @returns {Element}
  */
-function query(node, predicate) {
+export function query(node, predicate) {
   var elementPredicate = AND(isElement, predicate);
   return nodeWalk(node, elementPredicate);
 }
@@ -425,7 +447,7 @@ function query(node, predicate) {
  *
  * @return {Array[Element]}
  */
-function queryAll(node, predicate, matches) {
+export function queryAll(node, predicate, matches) {
   var elementPredicate = AND(isElement, predicate);
   return nodeWalkAll(node, elementPredicate, matches);
 }
@@ -466,7 +488,7 @@ function newDocumentFragment() {
   };
 }
 
-function cloneNode(node) {
+export function cloneNode(node) {
   // parent is a backreference, and we don't want to clone the whole tree, so
   // make it null before cloning.
   var parent = node.parentNode;
@@ -481,7 +503,7 @@ function cloneNode(node) {
  * current node at `index`. If `newNode` is a DocumentFragment, its childNodes
  * are inserted and removed from the fragment.
  */
-function insertNode(parent, index, newNode, replace) {
+function insertNode(parent, index, newNode, replace?: boolean) {
   var newNodes = [];
   var removedNode = replace ? parent.childNodes[index] : null;
 
@@ -511,13 +533,13 @@ function insertNode(parent, index, newNode, replace) {
   }
 }
 
-function replace(oldNode, newNode) {
+export function replace(oldNode, newNode) {
   var parent = oldNode.parentNode;
   var index = parent.childNodes.indexOf(oldNode);
   insertNode(parent, index, newNode, true);
 }
 
-function remove(node) {
+export function remove(node) {
   var parent = node.parentNode;
   if (parent) {
     var idx = parent.childNodes.indexOf(node);
@@ -526,57 +548,31 @@ function remove(node) {
   node.parentNode = null;
 }
 
-function insertBefore(parent, oldNode, newNode) {
+export function insertBefore(parent, oldNode, newNode) {
   var index = parent.childNodes.indexOf(oldNode);
   insertNode(parent, index, newNode);
 }
 
-function append(parent, newNode) {
+export function append(parent, newNode) {
   insertNode(parent, parent.childNodes.length, newNode);
 }
 
-var parse5 = require('parse5');
-function parse(text, options) {
+export function parse(text, options) {
   var parser = new parse5.Parser(parse5.TreeAdapters.default, options);
   return parser.parse(text);
 }
 
-function parseFragment(text) {
+export function parseFragment(text) {
   var parser = new parse5.Parser();
   return parser.parseFragment(text);
 }
 
-function serialize(ast) {
+export function serialize(ast) {
   var serializer = new parse5.Serializer();
   return serializer.serialize(ast);
 }
 
-module.exports = {
-  getAttribute: getAttribute,
-  hasAttribute: hasAttribute,
-  setAttribute: setAttribute,
-  removeAttribute: removeAttribute,
-  getTextContent: getTextContent,
-  setTextContent: setTextContent,
-  remove: remove,
-  replace: replace,
-  append: append,
-  cloneNode: cloneNode,
-  insertBefore: insertBefore,
-  normalize: normalize,
-  isDocument: isDocument,
-  isDocumentFragment: isDocumentFragment,
-  isElement: isElement,
-  isTextNode: isTextNode,
-  isCommentNode: isCommentNode,
-  query: query,
-  queryAll: queryAll,
-  nodeWalk: nodeWalk,
-  nodeWalkAll: nodeWalkAll,
-  nodeWalkPrior: nodeWalkPrior,
-  nodeWalkAllPrior: nodeWalkAllPrior,
-  treeMap: treeMap,
-  predicates: {
+export const predicates = {
     hasClass: hasClass,
     hasAttr: hasAttr,
     hasAttrValue: hasAttrValue,
@@ -587,14 +583,11 @@ module.exports = {
     OR: OR,
     NOT: NOT,
     parentMatches: parentMatches,
-  },
-  constructors: {
+  };
+export const   constructors = {
     text: newTextNode,
     comment: newCommentNode,
     element: newElement,
     fragment: newDocumentFragment,
-  },
-  parse: parse,
-  parseFragment: parseFragment,
-  serialize: serialize,
-};
+  };
+

@@ -4,14 +4,18 @@
   "description": "Utilities for working with parse5 ASTs",
   "license": "BSD-3-Clause",
   "scripts": {
-    "test": "jshint --verbose *.js test/*.js && mocha --ui tdd"
+    "build": "tsc",
+    "prepublish": "npm run test",
+    "test": "npm run build && jshint --verbose test/*.js && mocha --ui tdd"
   },
   "devDependencies": {
     "chai": "^3.3.0",
     "jshint": "^2.6.3",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "typescript": "^2.0.0"
   },
   "main": "dom5.js",
+  "typings": "dom5.d.ts",
   "directories": {
     "test": "test"
   },
@@ -25,6 +29,9 @@
   },
   "homepage": "https://github.com/PolymerLabs/dom5",
   "dependencies": {
+    "@types/clone": "^0.1.29",
+    "@types/node": "^4.0.30",
+    "@types/parse5": "0.0.28",
     "clone": "^1.0.2",
     "parse5": "^1.4.1"
   }
