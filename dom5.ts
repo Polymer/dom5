@@ -26,7 +26,9 @@ declare module 'parse5' {
     constructor();
     serialize(node: ASTNode): string;
   }
-  export const TreeAdapters: {default: TreeAdapter;};
+  export const TreeAdapters: {
+    default: TreeAdapter;  //
+  };
   export interface ASTNode { tagName?: string; }
   export interface CommentNode extends ASTNode { data: string; }
 }
@@ -40,8 +42,8 @@ function getAttributeIndex(element: Node, name: string): number {
   if (!element.attrs) {
     return -1;
   }
-  var n = name.toLowerCase();
-  for (var i = 0; i < element.attrs.length; i++) {
+  let n = name.toLowerCase();
+  for (let i = 0; i < element.attrs.length; i++) {
     if (element.attrs[i].name.toLowerCase() === n) {
       return i;
     }
@@ -60,7 +62,7 @@ export function hasAttribute(element: Node, name: string): boolean {
  * @returns The string value of attribute `name`, or `null`.
  */
 export function getAttribute(element: Node, name: string): string|null {
-  var i = getAttributeIndex(element, name);
+  const i = getAttributeIndex(element, name);
   if (i > -1) {
     return element.attrs[i].value;
   }
@@ -68,7 +70,7 @@ export function getAttribute(element: Node, name: string): string|null {
 }
 
 export function setAttribute(element: Node, name: string, value: string) {
-  var i = getAttributeIndex(element, name);
+  const i = getAttributeIndex(element, name);
   if (i > -1) {
     element.attrs[i].value = value;
   } else {
@@ -77,14 +79,14 @@ export function setAttribute(element: Node, name: string, value: string) {
 }
 
 export function removeAttribute(element: Node, name: string) {
-  var i = getAttributeIndex(element, name);
+  const i = getAttributeIndex(element, name);
   if (i > -1) {
     element.attrs.splice(i, 1);
   }
 }
 
 function hasTagName(name: string): Predicate {
-  var n = name.toLowerCase();
+  const n = name.toLowerCase();
   return function(node) {
     if (!node.tagName) {
       return false;
@@ -109,7 +111,7 @@ function hasMatchingTagName(regex: RegExp): Predicate {
 
 function hasClass(name: string): Predicate {
   return function(node) {
-    var attr = getAttribute(node, 'class');
+    const attr = getAttribute(node, 'class');
     if (!attr) {
       return false;
     }
@@ -121,13 +123,13 @@ function collapseTextRange(parent: Node, start: number, end: number) {
   if (!parent.childNodes) {
     return;
   }
-  var text = '';
-  for (var i = start; i <= end; i++) {
+  let text = '';
+  for (let i = start; i <= end; i++) {
     text += getTextContent(parent.childNodes[i]);
   }
   parent.childNodes.splice(start, (end - start) + 1);
   if (text) {
-    var tn = newTextNode(text);
+    const tn = newTextNode(text);
     tn.parentNode = parent;
     parent.childNodes.splice(start, 0, tn);
   }
@@ -146,11 +148,11 @@ export function normalize(node: Node) {
   if (!node.childNodes) {
     return;
   }
-  var textRangeStart = -1;
-  for (var i = node.childNodes.length - 1, n: Node; i >= 0; i--) {
+  let textRangeStart = -1;
+  for (let i = node.childNodes.length - 1, n: Node; i >= 0; i--) {
     n = node.childNodes[i];
     if (isTextNode(n)) {
-      if (textRangeStart == -1) {
+      if (textRangeStart === -1) {
         textRangeStart = i;
       }
       if (i === 0) {
@@ -181,7 +183,7 @@ export function getTextContent(node: Node): string {
   if (isTextNode(node)) {
     return node.value || '';
   }
-  var subtree = nodeWalkAll(node, isTextNode);
+  const subtree = nodeWalkAll(node, isTextNode);
   return subtree.map(getTextContent).join('');
 }
 
@@ -196,7 +198,7 @@ export function setTextContent(node: Node, value: string) {
   } else if (isTextNode(node)) {
     node.value = value;
   } else {
-    var tn = newTextNode(value);
+    const tn = newTextNode(value);
     tn.parentNode = node;
     node.childNodes = [tn];
   }
@@ -209,7 +211,9 @@ export function setTextContent(node: Node, value: string) {
  * the textnode is the only child in that parent.
  */
 function hasTextValue(value: string): Predicate {
-  return function(node) { return getTextContent(node) === value; };
+  return function(node) {
+    return getTextContent(node) === value;
+  };
 }
 
 export type Predicate = (node: Node) => boolean;
@@ -219,12 +223,12 @@ export type Predicate = (node: Node) => boolean;
  */
 function OR(...predicates: Predicate[]): Predicate;
 function OR(/* ...rules */): Predicate {
-  var rules = new Array<Predicate>(arguments.length);
-  for (var i = 0; i < arguments.length; i++) {
+  const rules = new Array<Predicate>(arguments.length);
+  for (let i = 0; i < arguments.length; i++) {
     rules[i] = arguments[i];
   }
   return function(node) {
-    for (var i = 0; i < rules.length; i++) {
+    for (let i = 0; i < rules.length; i++) {
       if (rules[i](node)) {
         return true;
       }
@@ -238,12 +242,12 @@ function OR(/* ...rules */): Predicate {
  */
 function AND(...predicates: Predicate[]): Predicate;
 function AND(/* ...rules */): Predicate {
-  var rules = new Array<Predicate>(arguments.length);
-  for (var i = 0; i < arguments.length; i++) {
+  const rules = new Array<Predicate>(arguments.length);
+  for (let i = 0; i < arguments.length; i++) {
     rules[i] = arguments[i];
   }
   return function(node) {
-    for (var i = 0; i < rules.length; i++) {
+    for (let i = 0; i < rules.length; i++) {
       if (!rules[i](node)) {
         return false;
       }
@@ -256,7 +260,9 @@ function AND(/* ...rules */): Predicate {
  * negate an individual predicate, or a group with AND or OR
  */
 function NOT(predicateFn: Predicate): Predicate {
-  return function(node) { return !predicateFn(node); };
+  return function(node) {
+    return !predicateFn(node);
+  };
 }
 
 /**
@@ -265,7 +271,7 @@ function NOT(predicateFn: Predicate): Predicate {
  */
 function parentMatches(predicateFn: Predicate): Predicate {
   return function(node) {
-    var parent = node.parentNode;
+    let parent = node.parentNode;
     while (parent !== undefined) {
       if (predicateFn(parent)) {
         return true;
@@ -277,11 +283,15 @@ function parentMatches(predicateFn: Predicate): Predicate {
 }
 
 function hasAttr(attr: string): Predicate {
-  return function(node) { return getAttributeIndex(node, attr) > -1; };
+  return function(node) {
+    return getAttributeIndex(node, attr) > -1;
+  };
 }
 
 function hasAttrValue(attr: string, value: string): Predicate {
-  return function(node) { return getAttribute(node, attr) === value; };
+  return function(node) {
+    return getAttribute(node, attr) === value;
+  };
 }
 
 export function isDocument(node: Node): boolean {
@@ -309,7 +319,7 @@ export function isCommentNode(node: Node): node is parse5.CommentNode {
  * list of results.
  */
 export function treeMap<U>(node: Node, mapfn: (node: Node) => U[]): U[] {
-  var results: U[] = [];
+  let results: U[] = [];
   nodeWalk(node, function(node) {
     results = results.concat(mapfn(node));
     return false;
@@ -327,9 +337,9 @@ export function nodeWalk(node: Node, predicate: Predicate): Node|null {
   if (predicate(node)) {
     return node;
   }
-  var match: Node|null = null;
+  let match: Node|null = null;
   if (node.childNodes) {
-    for (var i = 0; i < node.childNodes.length; i++) {
+    for (let i = 0; i < node.childNodes.length; i++) {
       match = nodeWalk(node.childNodes[i], predicate);
       if (match) {
         break;
@@ -353,7 +363,7 @@ export function nodeWalkAll(
     matches.push(node);
   }
   if (node.childNodes) {
-    for (var i = 0; i < node.childNodes.length; i++) {
+    for (let i = 0; i < node.childNodes.length; i++) {
       nodeWalkAll(node.childNodes[i], predicate, matches);
     }
   }
@@ -366,7 +376,7 @@ function _reverseNodeWalkAll(
     matches = [];
   }
   if (node.childNodes) {
-    for (var i = node.childNodes.length - 1; i >= 0; i--) {
+    for (let i = node.childNodes.length - 1; i >= 0; i--) {
       nodeWalkAll(node.childNodes[i], predicate, matches);
     }
   }
@@ -386,16 +396,16 @@ function _reverseNodeWalkAll(
 export function nodeWalkPrior(node: Node, predicate: Predicate): Node|
     undefined {
   // Search our earlier siblings and their descendents.
-  var parent = node.parentNode;
+  const parent = node.parentNode;
   if (parent) {
-    var idx = parent.childNodes!.indexOf(node);
-    var siblings = parent.childNodes!.slice(0, idx);
-    for (var i = siblings.length - 1; i >= 0; i--) {
-      var sibling = siblings[i];
+    const idx = parent.childNodes!.indexOf(node);
+    const siblings = parent.childNodes!.slice(0, idx);
+    for (let i = siblings.length - 1; i >= 0; i--) {
+      const sibling = siblings[i];
       if (predicate(sibling)) {
         return sibling;
       }
-      var found = nodeWalk(sibling, predicate);
+      const found = nodeWalk(sibling, predicate);
       if (found) {
         return found;
       }
@@ -423,11 +433,11 @@ export function nodeWalkAllPrior(
     matches.push(node);
   }
   // Search our earlier siblings and their descendents.
-  var parent = node.parentNode;
+  const parent = node.parentNode;
   if (parent) {
-    var idx = parent.childNodes!.indexOf(node);
-    var siblings = parent.childNodes!.slice(0, idx);
-    for (var i = siblings.length - 1; i >= 0; i--) {
+    const idx = parent.childNodes!.indexOf(node);
+    const siblings = parent.childNodes!.slice(0, idx);
+    for (let i = siblings.length - 1; i >= 0; i--) {
       _reverseNodeWalkAll(siblings[i], predicate, matches);
     }
     nodeWalkAllPrior(parent, predicate, matches);
@@ -439,7 +449,7 @@ export function nodeWalkAllPrior(
  * Equivalent to `nodeWalk`, but only matches elements
  */
 export function query(node: Node, predicate: Predicate): Node|null {
-  var elementPredicate = AND(isElement, predicate);
+  const elementPredicate = AND(isElement, predicate);
   return nodeWalk(node, elementPredicate);
 }
 
@@ -448,7 +458,7 @@ export function query(node: Node, predicate: Predicate): Node|null {
  */
 export function queryAll(
     node: Node, predicate: Predicate, matches: Node[]): Node[] {
-  var elementPredicate = AND(isElement, predicate);
+  const elementPredicate = AND(isElement, predicate);
   return nodeWalkAll(node, elementPredicate, matches);
 }
 
@@ -496,9 +506,9 @@ function newDocumentFragment() {
 export function cloneNode(node: Node): Node {
   // parent is a backreference, and we don't want to clone the whole tree, so
   // make it null before cloning.
-  var parent = node.parentNode;
+  const parent = node.parentNode;
   node.parentNode = undefined;
-  var clone = cloneObject(node);
+  const clone = cloneObject(node);
   node.parentNode = parent;
   return clone;
 }
@@ -513,8 +523,8 @@ function insertNode(
   if (!parent.childNodes) {
     throw new Error(`Parent node has no childNodes, can't insert.`);
   }
-  var newNodes: Node[] = [];
-  var removedNode = replace ? parent.childNodes[index] : null;
+  let newNodes: Node[] = [];
+  let removedNode = replace ? parent.childNodes[index] : null;
 
   if (newNode) {
     if (isDocumentFragment(newNode)) {
@@ -533,7 +543,9 @@ function insertNode(
   Array.prototype.splice.apply(
       parent.childNodes, (<any>[index, replace ? 1 : 0]).concat(newNodes));
 
-  newNodes.forEach(function(n) { n.parentNode = parent; });
+  newNodes.forEach(function(n) {
+    n.parentNode = parent;
+  });
 
   if (removedNode) {
     removedNode.parentNode = undefined;
@@ -541,22 +553,22 @@ function insertNode(
 }
 
 export function replace(oldNode: Node, newNode: Node) {
-  var parent = oldNode.parentNode;
-  var index = parent!.childNodes!.indexOf(oldNode);
+  const parent = oldNode.parentNode;
+  const index = parent!.childNodes!.indexOf(oldNode);
   insertNode(parent!, index, newNode, true);
 }
 
 export function remove(node: Node) {
-  var parent = node.parentNode;
+  const parent = node.parentNode;
   if (parent && parent.childNodes) {
-    var idx = parent.childNodes.indexOf(node);
+    const idx = parent.childNodes.indexOf(node);
     parent.childNodes.splice(idx, 1);
   }
   node.parentNode = undefined;
 }
 
 export function insertBefore(parent: Node, oldNode: Node, newNode: Node) {
-  var index = parent.childNodes!.indexOf(oldNode);
+  const index = parent.childNodes!.indexOf(oldNode);
   insertNode(parent, index, newNode);
 }
 
@@ -565,17 +577,17 @@ export function append(parent: Node, newNode: Node) {
 }
 
 export function parse(text: string, options: parse5.ParserOptions) {
-  var parser = new parse5.Parser(parse5.TreeAdapters.default, options);
+  const parser = new parse5.Parser(parse5.TreeAdapters.default, options);
   return parser.parse(text);
 }
 
 export function parseFragment(text: string) {
-  var parser = new parse5.Parser();
+  const parser = new parse5.Parser();
   return parser.parseFragment(text);
 }
 
 export function serialize(ast: Node) {
-  var serializer = new parse5.Serializer();
+  const serializer = new parse5.Serializer();
   return serializer.serialize(ast);
 }
 
