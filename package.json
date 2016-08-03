@@ -6,10 +6,12 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run test",
-    "test": "npm run build && jshint --verbose test/*.js && mocha --ui tdd"
+    "test": "npm run build && jshint --verbose test/*.js && mocha --ui tdd",
+    "format": "./node_modules/.bin/clang-format --style=file -i dom5.ts"
   },
   "devDependencies": {
     "chai": "^3.3.0",
+    "clang-format": "^1.0.42",
     "jshint": "^2.6.3",
     "mocha": "^2.0.1",
     "typescript": "^2.0.0"

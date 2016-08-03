@@ -1,20 +1,22 @@
 /**
  * @license
  * Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
- * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
- * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * The complete set of authors may be found at
+ * http://polymer.github.io/AUTHORS.txt
+ * The complete set of contributors may be found at
+ * http://polymer.github.io/CONTRIBUTORS.txt
  * Code distributed by Google as part of the polymer project is also
- * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
  */
 
 // jshint node: true
 'use strict';
 
 declare module 'parse5' {
-  interface TreeAdapter {
-
-  }
+  interface TreeAdapter {}
   export class Parser {
     constructor(treeAdapter?: TreeAdapter, options?: ParserOptions);
     parse(html: string): ASTNode;
@@ -24,20 +26,15 @@ declare module 'parse5' {
     constructor();
     serialize(node: ASTNode): string;
   }
-  export const TreeAdapters: {
-    default: TreeAdapter;
-  }
-  export interface ASTNode {
-    tagName?: string;
-  }
-  export interface CommentNode extends ASTNode {
-    data: string;
-  }
+  export const TreeAdapters: {default: TreeAdapter;};
+  export interface ASTNode { tagName?: string; }
+  export interface CommentNode extends ASTNode { data: string; }
 }
 
 import * as cloneObject from 'clone';
 import * as parse5 from 'parse5';
 import {ASTNode as Node} from 'parse5';
+export {ASTNode as Node} from 'parse5';
 
 function getAttributeIndex(element: Node, name: string): number {
   if (!element.attrs) {
@@ -62,7 +59,7 @@ export function hasAttribute(element: Node, name: string): boolean {
 /**
  * @returns The string value of attribute `name`, or `null`.
  */
-export function getAttribute(element: Node, name: string): string | null {
+export function getAttribute(element: Node, name: string): string|null {
   var i = getAttributeIndex(element, name);
   if (i > -1) {
     return element.attrs[i].value;
@@ -212,9 +209,7 @@ export function setTextContent(node: Node, value: string) {
  * the textnode is the only child in that parent.
  */
 function hasTextValue(value: string): Predicate {
-  return function(node) {
-    return getTextContent(node) === value;
-  };
+  return function(node) { return getTextContent(node) === value; };
 }
 
 export type Predicate = (node: Node) => boolean;
@@ -241,7 +236,7 @@ function OR(/* ...rules */): Predicate {
 /**
  * AND an array of predicates
  */
-function AND(...predicates: Predicate[]):Predicate;
+function AND(...predicates: Predicate[]): Predicate;
 function AND(/* ...rules */): Predicate {
   var rules = new Array<Predicate>(arguments.length);
   for (var i = 0; i < arguments.length; i++) {
@@ -261,18 +256,17 @@ function AND(/* ...rules */): Predicate {
  * negate an individual predicate, or a group with AND or OR
  */
 function NOT(predicateFn: Predicate): Predicate {
-  return function(node) {
-    return !predicateFn(node);
-  };
+  return function(node) { return !predicateFn(node); };
 }
 
 /**
- * Returns a predicate that matches any node with a parent matching `predicateFn`.
+ * Returns a predicate that matches any node with a parent matching
+ * `predicateFn`.
  */
 function parentMatches(predicateFn: Predicate): Predicate {
   return function(node) {
     var parent = node.parentNode;
-    while(parent !== undefined) {
+    while (parent !== undefined) {
       if (predicateFn(parent)) {
         return true;
       }
@@ -283,15 +277,11 @@ function parentMatches(predicateFn: Predicate): Predicate {
 }
 
 function hasAttr(attr: string): Predicate {
-  return function(node) {
-    return getAttributeIndex(node, attr) > -1;
-  };
+  return function(node) { return getAttributeIndex(node, attr) > -1; };
 }
 
 function hasAttrValue(attr: string, value: string): Predicate {
-  return function(node) {
-    return getAttribute(node, attr) === value;
-  };
+  return function(node) { return getAttribute(node, attr) === value; };
 }
 
 export function isDocument(node: Node): boolean {
@@ -318,9 +308,9 @@ export function isCommentNode(node: Node): node is parse5.CommentNode {
  * Applies `mapfn` to `node` and the tree below `node`, returning a flattened
  * list of results.
  */
-export function treeMap<U>(node: Node, mapfn: (node: Node)=>U[]): U[] {
+export function treeMap<U>(node: Node, mapfn: (node: Node) => U[]): U[] {
   var results: U[] = [];
-  nodeWalk(node, function(node){
+  nodeWalk(node, function(node) {
     results = results.concat(mapfn(node));
     return false;
   });
@@ -333,11 +323,11 @@ export function treeMap<U>(node: Node, mapfn: (node: Node)=>U[]): U[] {
  *
  * @returns `null` if no node matches, parse5 node object if a node matches.
  */
-export function nodeWalk(node: Node, predicate: Predicate): Node | null {
+export function nodeWalk(node: Node, predicate: Predicate): Node|null {
   if (predicate(node)) {
     return node;
   }
-  var match: Node | null = null;
+  var match: Node|null = null;
   if (node.childNodes) {
     for (var i = 0; i < node.childNodes.length; i++) {
       match = nodeWalk(node.childNodes[i], predicate);
@@ -354,7 +344,8 @@ export function nodeWalk(node: Node, predicate: Predicate): Node | null {
  * All nodes matching the predicate function from `node` to leaves will be
  * returned.
  */
-export function nodeWalkAll(node: Node, predicate: Predicate, matches?: Node[]): Node[] {
+export function nodeWalkAll(
+    node: Node, predicate: Predicate, matches?: Node[]): Node[] {
   if (!matches) {
     matches = [];
   }
@@ -369,7 +360,8 @@ export function nodeWalkAll(node: Node, predicate: Predicate, matches?: Node[]):
   return matches;
 }
 
-function _reverseNodeWalkAll(node: Node, predicate: Predicate, matches: Node[]): Node[] {
+function _reverseNodeWalkAll(
+    node: Node, predicate: Predicate, matches: Node[]): Node[] {
   if (!matches) {
     matches = [];
   }
@@ -391,13 +383,14 @@ function _reverseNodeWalkAll(node: Node, predicate: Predicate, matches: Node[]):
  * Nodes are searched in reverse document order, starting from the sibling
  * prior to `node`.
  */
-export function nodeWalkPrior(node: Node, predicate: Predicate): Node | undefined {
+export function nodeWalkPrior(node: Node, predicate: Predicate): Node|
+    undefined {
   // Search our earlier siblings and their descendents.
   var parent = node.parentNode;
   if (parent) {
     var idx = parent.childNodes!.indexOf(node);
     var siblings = parent.childNodes!.slice(0, idx);
-    for (var i = siblings.length-1; i >= 0; i--) {
+    for (var i = siblings.length - 1; i >= 0; i--) {
       var sibling = siblings[i];
       if (predicate(sibling)) {
         return sibling;
@@ -421,7 +414,8 @@ export function nodeWalkPrior(node: Node, predicate: Predicate): Node | undefine
  *
  * Nodes are returned in reverse document order, starting from `node`.
  */
-export function nodeWalkAllPrior(node: Node, predicate: Predicate, matches?: Node[]): Node[] {
+export function nodeWalkAllPrior(
+    node: Node, predicate: Predicate, matches?: Node[]): Node[] {
   if (!matches) {
     matches = [];
   }
@@ -433,7 +427,7 @@ export function nodeWalkAllPrior(node: Node, predicate: Predicate, matches?: Nod
   if (parent) {
     var idx = parent.childNodes!.indexOf(node);
     var siblings = parent.childNodes!.slice(0, idx);
-    for (var i = siblings.length-1; i >= 0; i--) {
+    for (var i = siblings.length - 1; i >= 0; i--) {
       _reverseNodeWalkAll(siblings[i], predicate, matches);
     }
     nodeWalkAllPrior(parent, predicate, matches);
@@ -444,7 +438,7 @@ export function nodeWalkAllPrior(node: Node, predicate: Predicate, matches?: Nod
 /**
  * Equivalent to `nodeWalk`, but only matches elements
  */
-export function query(node: Node, predicate: Predicate): Node | null {
+export function query(node: Node, predicate: Predicate): Node|null {
   var elementPredicate = AND(isElement, predicate);
   return nodeWalk(node, elementPredicate);
 }
@@ -452,7 +446,8 @@ export function query(node: Node, predicate: Predicate): Node | null {
 /**
  * Equivalent to `nodeWalkAll`, but only matches elements
  */
-export function queryAll(node: Node, predicate: Predicate, matches: Node[]): Node[] {
+export function queryAll(
+    node: Node, predicate: Predicate, matches: Node[]): Node[] {
   var elementPredicate = AND(isElement, predicate);
   return nodeWalkAll(node, elementPredicate, matches);
 }
@@ -513,7 +508,8 @@ export function cloneNode(node: Node): Node {
  * current node at `index`. If `newNode` is a DocumentFragment, its childNodes
  * are inserted and removed from the fragment.
  */
-function insertNode(parent: Node, index: number, newNode: Node, replace?: boolean) {
+function insertNode(
+    parent: Node, index: number, newNode: Node, replace?: boolean) {
   if (!parent.childNodes) {
     throw new Error(`Parent node has no childNodes, can't insert.`);
   }
@@ -534,12 +530,10 @@ function insertNode(parent: Node, index: number, newNode: Node, replace?: boolea
     removedNode = parent.childNodes[index];
   }
 
-  Array.prototype.splice.apply(parent.childNodes,
-      (<any>[index, replace ? 1 : 0]).concat(newNodes));
+  Array.prototype.splice.apply(
+      parent.childNodes, (<any>[index, replace ? 1 : 0]).concat(newNodes));
 
-  newNodes.forEach(function(n) {
-    n.parentNode = parent;
-  });
+  newNodes.forEach(function(n) { n.parentNode = parent; });
 
   if (removedNode) {
     removedNode.parentNode = undefined;
@@ -586,21 +580,20 @@ export function serialize(ast: Node) {
 }
 
 export const predicates = {
-    hasClass: hasClass,
-    hasAttr: hasAttr,
-    hasAttrValue: hasAttrValue,
-    hasMatchingTagName: hasMatchingTagName,
-    hasTagName: hasTagName,
-    hasTextValue: hasTextValue,
-    AND: AND,
-    OR: OR,
-    NOT: NOT,
-    parentMatches: parentMatches,
-  };
-export const   constructors = {
-    text: newTextNode,
-    comment: newCommentNode,
-    element: newElement,
-    fragment: newDocumentFragment,
-  };
-
+  hasClass: hasClass,
+  hasAttr: hasAttr,
+  hasAttrValue: hasAttrValue,
+  hasMatchingTagName: hasMatchingTagName,
+  hasTagName: hasTagName,
+  hasTextValue: hasTextValue,
+  AND: AND,
+  OR: OR,
+  NOT: NOT,
+  parentMatches: parentMatches,
+};
+export const constructors = {
+  text: newTextNode,
+  comment: newCommentNode,
+  element: newElement,
+  fragment: newDocumentFragment,
+};
