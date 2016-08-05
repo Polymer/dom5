@@ -12,27 +12,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-// jshint node: true
-'use strict';
-
-declare module 'parse5' {
-  interface TreeAdapter {}
-  export class Parser {
-    constructor(treeAdapter?: TreeAdapter, options?: ParserOptions);
-    parse(html: string): ASTNode;
-    parseFragment(html: string): ASTNode;
-  }
-  export class Serializer {
-    constructor();
-    serialize(node: ASTNode): string;
-  }
-  export const TreeAdapters: {
-    default: TreeAdapter;  //
-  };
-  export interface ASTNode { tagName?: string; }
-  export interface CommentNode extends ASTNode { data: string; }
-}
-
+/// <reference path="./custom_typings/main.d.ts" />
 import * as cloneObject from 'clone';
 import * as parse5 from 'parse5';
 import {ASTNode as Node} from 'parse5';
