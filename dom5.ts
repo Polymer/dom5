@@ -486,11 +486,7 @@ function newDocumentFragment() {
 export function cloneNode(node: Node): Node {
   // parent is a backreference, and we don't want to clone the whole tree, so
   // make it null before cloning.
-  const parent = node.parentNode;
-  node.parentNode = undefined;
-  const clone = cloneObject(node);
-  node.parentNode = parent;
-  return clone;
+  return parse(serialize(node));
 }
 
 /**
