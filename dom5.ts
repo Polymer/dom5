@@ -18,6 +18,10 @@ import * as parse5 from 'parse5';
 import {ASTNode as Node} from 'parse5';
 export {ASTNode as Node} from 'parse5';
 
+interface TemplateNode extends Node {
+    content: Node;
+}
+
 function getAttributeIndex(element: Node, name: string): number {
   if (!element.attrs) {
     return -1;
@@ -323,9 +327,13 @@ export function nodeWalk(node: Node, predicate: Predicate): Node|null {
     return node;
   }
   let match: Node|null = null;
-  if (node.childNodes) {
-    for (let i = 0; i < node.childNodes.length; i++) {
-      match = nodeWalk(node.childNodes[i], predicate);
+  let childNodes = node.childNodes;
+  if (node.nodeName === 'template') {
+    childNodes = [(node as TemplateNode).content];
+  }
+  if (childNodes) {
+    for (let i = 0; i < childNodes.length; i++) {
+      match = nodeWalk(childNodes[i], predicate);
       if (match) {
         break;
       }
@@ -347,9 +355,13 @@ export function nodeWalkAll(
   if (predicate(node)) {
     matches.push(node);
   }
-  if (node.childNodes) {
-    for (let i = 0; i < node.childNodes.length; i++) {
-      nodeWalkAll(node.childNodes[i], predicate, matches);
+  let childNodes = node.childNodes;
+  if (node.nodeName === 'template') {
+    childNodes = [(node as TemplateNode).content];
+  }
+  if (childNodes) {
+    for (let i = 0; i < childNodes.length; i++) {
+      nodeWalkAll(childNodes[i], predicate, matches);
     }
   }
   return matches;
@@ -579,18 +591,15 @@ export function append(parent: Node, newNode: Node) {
 }
 
 export function parse(text: string, options?: parse5.ParserOptions) {
-  const parser = new parse5.Parser(parse5.TreeAdapters.default, options);
-  return parser.parse(text);
+  return parse5.parse(text, options);
 }
 
 export function parseFragment(text: string) {
-  const parser = new parse5.Parser();
-  return parser.parseFragment(text);
+  return parse5.parseFragment(text);
 }
 
 export function serialize(ast: Node) {
-  const serializer = new parse5.Serializer();
-  return serializer.serialize(ast);
+  return parse5.serialize(ast);
 }
 
 export const predicates = {
