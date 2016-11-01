@@ -2,8 +2,6 @@
 
 ## Unreleased
 
-- Upgrade to `parse5@^v2.2.22` so that we can take advantage of new types info.
-
 ## [v2.0.0](https://github.com/PolymerLabs/dom5/tree/v2.0.0) (2016-09-23)
 - Upgraded to `parse5@^v2.2.1`.
 - (*breaking*) Because parse5 2.x correctly handles `<template>` elements,
