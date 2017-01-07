@@ -547,12 +547,12 @@ suite('dom5', function() {
       '<!DOCTYPE html>',
       '<link rel="import" href="polymer.html">',
       '<dom-module id="my-el">',
-      '<div>', // TODO(justinfagnani): this used to be a template, we should test templates
+      '<template>',
       '<img src="foo.jpg">',
       '<a href="next-page.html">Anchor</a>',
       'sample element',
       '<!-- comment node -->',
-      '</div>',
+      '</template>',
       '</dom-module>',
       '<script>Polymer({is: "my-el"})</script>'
     ].join('\n');
@@ -563,9 +563,10 @@ suite('dom5', function() {
     });
 
     test('nodeWalkAncestors', function() {
-      // doc -> dom-module -> div -> a
-      const anchor = doc.childNodes![1].childNodes![1].childNodes![0]
-          .childNodes![1].childNodes![3];
+      // doc -> dom-module -> template -> a
+      const template = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1];
+      const anchor = parse5.treeAdapters.default.getTemplateContent(template)
+          .childNodes![3];
 
       assert(dom5.predicates.hasTagName('a')(anchor));
       const domModule =
@@ -579,8 +580,9 @@ suite('dom5', function() {
     });
 
     test('nodeWalk', function() {
-      // doc -> body -> dom-module -> div
-      const div = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1];
+      // doc -> body -> dom-module -> template
+      const template = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1];
+      const templateContent = parse5.treeAdapters.default.getTemplateContent(template);
 
       const textNode = dom5.predicates.AND(
         dom5.isTextNode,
@@ -588,13 +590,13 @@ suite('dom5', function() {
       );
 
       // 'sample element' text node
-      let expected = div.childNodes![4];
-      let actual = dom5.nodeWalk(doc, textNode);
+      let expected = templateContent.childNodes![4];
+      let actual = dom5.nodeWalk(doc, textNode, dom5.childNodesIncludeTemplate);
       assert.equal(expected, actual);
 
       // <!-- comment node -->
-      expected = div.childNodes![5];
-      actual = dom5.nodeWalk(div, dom5.isCommentNode);
+      expected = templateContent.childNodes![5];
+      actual = dom5.nodeWalk(template, dom5.isCommentNode, dom5.childNodesIncludeTemplate);
       assert.equal(expected, actual);
     });
 
@@ -622,7 +624,7 @@ suite('dom5', function() {
       // subtract one to get "gap" number
       const expected = serializedDoc.split('\n').length - 1;
       // add two for normalized text node "\nsample text\n"
-      const actual = dom5.nodeWalkAll(doc, empty).length + 2;
+      const actual = dom5.nodeWalkAll(doc, empty, [], dom5.childNodesIncludeTemplate).length + 2;
 
       assert.equal(expected, actual);
     });
@@ -638,14 +640,15 @@ suite('dom5', function() {
         )
       );
 
-      // doc -> body -> dom-module -> div
-      const div = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1];
+      // doc -> body -> dom-module -> template
+      const template = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1];
+      const templateContent = parse5.treeAdapters.default.getTemplateContent(template);
 
       // img
-      const expected_1 = div.childNodes![1];
+      const expected_1 = templateContent.childNodes![1];
       // anchor
-      const expected_2 = div.childNodes![3];
-      const actual = dom5.queryAll(doc, fn);
+      const expected_2 = templateContent.childNodes![3];
+      const actual = dom5.queryAll(doc, fn, [], dom5.childNodesIncludeTemplate);
 
       assert.equal(actual.length, 2);
       assert.equal(expected_1, actual[0]);
