@@ -317,8 +317,10 @@ export type childNodesRetriever = (node: Node) => Node[] | undefined;
 const defaultChildNodes: childNodesRetriever = node => node.childNodes;
 
 export const childNodesIncludeTemplate: childNodesRetriever = node => {
-  if (node.nodeName === 'template')
+  if (node.nodeName === 'template') {
     return treeAdapters.default.getTemplateContent(node).childNodes;
+  }
+
   return node.childNodes;
 };
 

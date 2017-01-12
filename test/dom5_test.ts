@@ -563,10 +563,9 @@ suite('dom5', function() {
     });
 
     test('nodeWalkAncestors', function() {
+      doc = parse5.parse(docText.replace(/template/g, 'div'));
       // doc -> dom-module -> template -> a
-      const template = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1];
-      const anchor = parse5.treeAdapters.default.getTemplateContent(template)
-          .childNodes![3];
+      const anchor = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1].childNodes![3];
 
       assert(dom5.predicates.hasTagName('a')(anchor));
       const domModule =
