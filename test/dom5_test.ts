@@ -543,19 +543,22 @@ suite('dom5', function() {
   });
 
   suite('Query', function() {
-    const docText = [
-      '<!DOCTYPE html>',
-      '<link rel="import" href="polymer.html">',
-      '<dom-module id="my-el">',
-      '<template>',
-      '<img src="foo.jpg">',
-      '<a href="next-page.html">Anchor</a>',
-      'sample element',
-      '<!-- comment node -->',
-      '</template>',
-      '</dom-module>',
-      '<script>Polymer({is: "my-el"})</script>'
-    ].join('\n');
+    const docText: string = `
+<!DOCTYPE html>
+<link rel="import" href="polymer.html">
+<dom-module id="my-el">
+  <template>
+    <img src="foo.jpg">
+    <a href="next-page.html">Anchor</a>
+    sample element
+    <!-- comment node -->
+  </template>
+  <div>
+    <a href="another-anchor">Anchor2</a>
+  </div>
+</dom-module>
+<script>Polymer({is: "my-el"})</script>
+`.replace(/  /g, '');
     let doc: parse5.ASTNode;
 
     setup(function() {
@@ -563,9 +566,8 @@ suite('dom5', function() {
     });
 
     test('nodeWalkAncestors', function() {
-      doc = parse5.parse(docText.replace(/template/g, 'div'));
-      // doc -> dom-module -> template -> a
-      const anchor = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![1].childNodes![3];
+      // doc -> dom-module -> div -> a
+      const anchor = doc.childNodes![1].childNodes![1].childNodes![0].childNodes![3].childNodes![1];
 
       assert(dom5.predicates.hasTagName('a')(anchor));
       const domModule =
@@ -649,7 +651,7 @@ suite('dom5', function() {
       const expected_2 = templateContent.childNodes![3];
       const actual = dom5.queryAll(doc, fn, [], dom5.childNodesIncludeTemplate);
 
-      assert.equal(actual.length, 2);
+      assert.equal(actual.length, 3);
       assert.equal(expected_1, actual[0]);
       assert.equal(expected_2, actual[1]);
     });
