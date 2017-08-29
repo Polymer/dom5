@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
-- Moved development-only dependencies in package.json to devDependencies.
 <!-- Add new, unreleased changes here. -->
+
+## [v2.3.1](https://github.com/Polymer/dom5/tree/v2.3.1) (2017-06-15)
+- Moved development-only dependencies in package.json to devDependencies.
 
 ## [v2.3.0](https://github.com/Polymer/dom5/tree/v2.3.0) (2017-05-03)
 - **Added** `insertAfter()` function
