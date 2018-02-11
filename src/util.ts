@@ -12,7 +12,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-import {ASTNode as Node} from 'parse5';
+import {ASTNode as Node, treeAdapters} from 'parse5';
 
 import {constructors} from './modification';
 import {isCommentNode, isDocument, isDocumentFragment, isElement, isTextNode} from './predicates';
@@ -155,3 +155,18 @@ export function setTextContent(node: Node, value: string) {
     node.childNodes = [tn];
   }
 }
+
+export type GetChildNodes = ((node: Node) => Node[] | undefined);
+
+export const defaultChildNodes = function defaultChildNodes(node: Node) {
+  return node.childNodes;
+};
+
+export const childNodesIncludeTemplate = function childNodesIncludeTemplate(
+    node: Node) {
+  if (node.nodeName === 'template') {
+    return treeAdapters.default.getTemplateContent(node).childNodes;
+  }
+
+  return node.childNodes;
+};

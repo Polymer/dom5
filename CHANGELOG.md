@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [BREAKING] Update to parse5 v4. For breaking changes see:
   - http://inikulin.github.io/parse5/#4-0-0 and
     http://inikulin.github.io/parse5/#3-0-0
+- [BREAKING] Split out the functions for walking the dom into `dom5.walking`.
+  So `dom5.nodeWalkAll` becomes `dom5.walking.nodeWalkAll`. These functions are
+  deprecated in favor of the faster and more flexible functions in
+  `dom5.iteration`. more easily track down and remove uses of them.
+- [BREAKING] Minimum supported version of node updated to v6 or above.
 - Moved development-only dependencies in package.json to devDependencies.
 <!-- Add new, unreleased changes here. -->
 

@@ -16,6 +16,7 @@ import {ASTNode as Node} from 'parse5';
 
 import * as iterables from './iteration';
 import {isElement, Predicate, predicates as p} from './predicates';
+import {defaultChildNodes, GetChildNodes} from './util';
 
 export {ASTNode as Node} from 'parse5';
 
@@ -26,12 +27,6 @@ export {ASTNode as Node} from 'parse5';
 export function treeMap<U>(node: Node, mapfn: (node: Node) => U[]): U[] {
   return Array.from(iterables.treeMap(node, mapfn));
 }
-
-export type GetChildNodes = (node: Node) => Node[] | undefined;
-
-export const defaultChildNodes = iterables.defaultChildNodes;
-
-export const childNodesIncludeTemplate = iterables.childNodesIncludeTemplate;
 
 function find<U>(iter: Iterable<U>, predicate: (u: U) => boolean) {
   for (const value of iter) {

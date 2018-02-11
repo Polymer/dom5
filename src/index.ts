@@ -14,4 +14,8 @@
 export * from './modification';
 export * from './predicates';
 export * from './util';
-export * from './walking';
+import * as _walking from './walking';
+import * as _iteration from './iteration';
+
+export const iteration = _iteration;
+export const walking = _walking;
