@@ -11,10 +11,10 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run test",
-    "test": "npm run build && npm run lint && mocha --ui tdd lib/test/*.js",
+    "test": "npm run build && npm run lint && mocha -c --ui tdd 'lib/test/*_test.js'",
     "format": "./node_modules/.bin/clang-format --style=file -i dom5.ts test/dom5_test.ts",
     "lint": "tslint dom5.ts",
-    "test:watch": "tsc-then -- mocha -c --ui tdd lib/test/*.js"
+    "test:watch": "tsc-then -- mocha -c --ui tdd 'lib/test/*_test.js'"
   },
   "dependencies": {
     "@types/parse5": "^2.2.32",
