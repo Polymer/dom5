@@ -14,7 +14,7 @@
 
 import {ASTNode as Node} from 'parse5';
 
-import * as iterables from './iteration';
+import * as iteration from './iteration';
 import {isElement, Predicate, predicates as p} from './predicates';
 import {defaultChildNodes, GetChildNodes} from './util';
 
@@ -25,7 +25,7 @@ export {ASTNode as Node} from 'parse5';
  * list of results.
  */
 export function treeMap<U>(node: Node, mapfn: (node: Node) => U[]): U[] {
-  return Array.from(iterables.treeMap(node, mapfn));
+  return Array.from(iteration.treeMap(node, mapfn));
 }
 
 function find<U>(iter: Iterable<U>, predicate: (u: U) => boolean) {
@@ -57,7 +57,7 @@ export function nodeWalk(
     node: Node,
     predicate: Predicate,
     getChildNodes: GetChildNodes = defaultChildNodes): Node|null {
-  return find(iterables.depthFirst(node, getChildNodes), predicate);
+  return find(iteration.depthFirst(node, getChildNodes), predicate);
 }
 
 /**
@@ -70,7 +70,7 @@ export function nodeWalkAll(
     predicate: Predicate,
     matches?: Node[],
     getChildNodes: GetChildNodes = defaultChildNodes): Node[] {
-  return filter(iterables.depthFirst(node, getChildNodes), predicate, matches);
+  return filter(iteration.depthFirst(node, getChildNodes), predicate, matches);
 }
 
 /**
@@ -82,27 +82,16 @@ export function nodeWalkAll(
  */
 export function nodeWalkPrior(node: Node, predicate: Predicate): Node|
     undefined {
-  const result = find(iteratePrior(node), predicate);
+  const result = find(iteration.prior(node), predicate);
   if (result === null) {
     return undefined;
   }
   return result;
 }
 
-function* iteratePrior(node: Node): IterableIterator<Node> {
-  for (const previousSibling of iterables.previousSiblings(node)) {
-    yield* iterables.depthFirstReversed(previousSibling);
-  }
-  const parent = node.parentNode;
-  if (parent) {
-    yield parent;
-    yield* iteratePrior(parent);
-  }
-}
-
 function* iteratePriorIncludingNode(node: Node) {
   yield node;
-  yield* iteratePrior(node);
+  yield* iteration.prior(node);
 }
 
 /**
@@ -123,7 +112,7 @@ export function nodeWalkAllPrior(
  */
 export function nodeWalkAncestors(node: Node, predicate: Predicate): Node|
     undefined {
-  const result = find(iterables.ancestors(node), predicate);
+  const result = find(iteration.ancestors(node), predicate);
   if (result === null) {
     return undefined;
   }

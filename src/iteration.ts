@@ -35,7 +35,7 @@ export function*
 
 
 /**
- * Iterates over the `node` and all of its children, recursively.
+ * Yields `node` and all of its children, recursively.
  *
  * Yields `node` first, yields emits each descendent in depth first order.
  */
@@ -52,6 +52,12 @@ export function*
   }
 }
 
+/**
+ * Yields node and all its descendents in reverse document order.
+ *
+ * Equivalent to:
+ *    yield* [...depthFirst(node)].reverse()
+ */
 export function*
     depthFirstReversed(
         node: Node, getChildNodes: GetChildNodes = defaultChildNodes):
@@ -111,6 +117,40 @@ export function* previousSiblings(node: Node): IterableIterator<Node> {
 function* reversedView<U>(arr: U[], initialIndex = arr.length - 1) {
   for (let index = initialIndex; index >= 0; index--) {
     yield arr[index];
+  }
+}
+
+/**
+ * Yields every node in the document that comes before `node`, in reverse
+ * document order.
+ *
+ * So if you have a tree like:
+ * ```html
+ *   <body>
+ *     <nav>
+ *       <li></li>
+ *     </nav>
+ *     <div>
+ *       <span></span>
+ *       <b></b>
+ *       <em></em>
+ *       ...
+ * ```
+ *
+ * Then `prior(<b>)` will yield:
+ *
+ *     <span>, <div>, <li>, <nav>, <body>, <head>, #document
+ *
+ * (`<head>` and `#document` are hallucinated by the html parser)
+ */
+export function* prior(node: Node): IterableIterator<Node> {
+  for (const previousSibling of previousSiblings(node)) {
+    yield* depthFirstReversed(previousSibling);
+  }
+  const parent = node.parentNode;
+  if (parent) {
+    yield parent;
+    yield* prior(parent);
   }
 }
 
