@@ -11,11 +11,13 @@
 
 /// <reference path="../../node_modules/@types/mocha/index.d.ts" />
 
-
 import * as chai from 'chai';
 import * as fs from 'fs';
 import * as parse5 from 'parse5';
+import * as path from 'path';
+
 import * as dom5 from '../index';
+import {fixturesDir} from './utils';
 
 const assert = chai.assert;
 
@@ -693,8 +695,8 @@ suite('dom5', () => {
   });
 
   suite('NodeWalkAllPrior', () => {
-    const docText =
-        fs.readFileSync(__dirname + '/static/multiple-comments.html', 'utf8');
+    const docText = fs.readFileSync(
+        path.join(fixturesDir, 'multiple-comments.html'), 'utf8');
     let doc: parse5.ASTNode;
 
     setup(() => {
