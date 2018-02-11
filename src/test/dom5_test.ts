@@ -9,13 +9,13 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-/// <reference path="../node_modules/@types/mocha/index.d.ts" />
+/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
 
 
 import * as chai from 'chai';
 import * as fs from 'fs';
 import * as parse5 from 'parse5';
-import * as dom5 from '../dom5';
+import * as dom5 from '../index';
 
 const assert = chai.assert;
 
