@@ -6,14 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
-- [BREAKING] Update to parse5 v4. For breaking changes see:
+- [BREAKING] Updated to parse5 v4. See:
   - http://inikulin.github.io/parse5/#4-0-0 and
     http://inikulin.github.io/parse5/#3-0-0
-- [BREAKING] Split out the functions for walking the dom into `dom5.walking`.
-  So `dom5.nodeWalkAll` becomes `dom5.walking.nodeWalkAll`. These functions are
-  deprecated in favor of the faster and more flexible functions in
-  `dom5.iteration`. more easily track down and remove uses of them.
+  - Most users will not be affected by these changes.
 - [BREAKING] Minimum supported version of node updated to v6 or above.
+- [Upcoming breaking change] We've redesigned our DOM walking API around
+  iteration rather than callbacks. Import `'dom5/lib/index-next.js'` to receive
+  the new API. This will be the API exposed in the next major version.
+  Specifically, the `nodeWalk`, `nodeWalkAll`, `nodeWalkPrior`,
+  `nodeWalkAllPrior`, and `nodeWalkAncestors` APIs are replaced by `depthFirst`,
+  `prior`, and `ancestors` APIs, which simply iterators now. In addition
+  `queryAll` will return an iterator rather than an array.
 - Moved development-only dependencies in package.json to devDependencies.
 <!-- Add new, unreleased changes here. -->
 

@@ -51,11 +51,11 @@ suite('walking', () => {
                        .childNodes![1];
 
     assert(dom5.predicates.hasTagName('a')(anchor));
-    const domModule = dom5.walking.nodeWalkAncestors(
+    const domModule = dom5.nodeWalkAncestors(
         anchor, dom5.predicates.hasTagName('dom-module'));
     assert(domModule);
-    const theLinkIsNotAnAncestor = dom5.walking.nodeWalkAncestors(
-        anchor, dom5.predicates.hasTagName('link'));
+    const theLinkIsNotAnAncestor =
+        dom5.nodeWalkAncestors(anchor, dom5.predicates.hasTagName('link'));
     assert.equal(theLinkIsNotAnAncestor, undefined);
   });
 
@@ -71,13 +71,12 @@ suite('walking', () => {
 
     // 'sample element' text node
     let expected = templateContent.childNodes![4];
-    let actual =
-        dom5.walking.nodeWalk(doc, textNode, dom5.childNodesIncludeTemplate);
+    let actual = dom5.nodeWalk(doc, textNode, dom5.childNodesIncludeTemplate);
     assert.equal(actual, expected);
 
     // <!-- comment node -->
     expected = templateContent.childNodes![5];
-    actual = dom5.walking.nodeWalk(
+    actual = dom5.nodeWalk(
         template, dom5.isCommentNode, dom5.childNodesIncludeTemplate);
     assert.equal(actual, expected);
   });
@@ -88,7 +87,7 @@ suite('walking', () => {
         dom5.predicates.hasAttrValue('rel', 'import'),
         dom5.predicates.hasAttr('href'));
     const expected = doc.childNodes![1].childNodes![0].childNodes![0];
-    const actual = dom5.walking.query(doc, fn);
+    const actual = dom5.query(doc, fn);
     assert.equal(actual, expected);
   });
 
@@ -103,7 +102,7 @@ suite('walking', () => {
     const expected = serializedDoc.split('\n').length - 1;
     // add two for normalized text node "\nsample text\n"
     const actual =
-        dom5.walking.nodeWalkAll(doc, empty, [], dom5.childNodesIncludeTemplate)
+        dom5.nodeWalkAll(doc, empty, [], dom5.childNodesIncludeTemplate)
             .length +
         2;
 
@@ -126,8 +125,7 @@ suite('walking', () => {
     const expected_1 = templateContent.childNodes![1];
     // anchor
     const expected_2 = templateContent.childNodes![3];
-    const actual =
-        dom5.walking.queryAll(doc, fn, [], dom5.childNodesIncludeTemplate);
+    const actual = dom5.queryAll(doc, fn, [], dom5.childNodesIncludeTemplate);
 
     assert.equal(actual.length, 3);
     assert.equal(actual[0], expected_1);
@@ -143,10 +141,9 @@ suite('walking', () => {
     });
 
     test('nodeWalkAllPrior', () => {
-      const domModule = dom5.walking.nodeWalkAll(
+      const domModule = dom5.nodeWalkAll(
           doc, dom5.predicates.hasAttrValue('id', 'test-element'))[0];
-      const comments =
-          dom5.walking.nodeWalkAllPrior(domModule, dom5.isCommentNode);
+      const comments = dom5.nodeWalkAllPrior(domModule, dom5.isCommentNode);
       assert.include(dom5.getTextContent(comments[0]), 'test element');
       assert.include(
           dom5.getTextContent(comments[1]), 'hash or path based routing');

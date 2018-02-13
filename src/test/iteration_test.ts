@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import * as parse5 from 'parse5';
 import * as path from 'path';
 
-import * as dom5 from '../index';
+import * as dom5 from '../index-next';
 import {fixturesDir} from './utils';
 
 /// <reference path="../../node_modules/@types/mocha/index.d.ts" />
@@ -51,10 +51,10 @@ suite('iteration', () => {
                        .childNodes![1];
 
     assert(dom5.predicates.hasTagName('a')(anchor));
-    const domModule = [...dom5.iteration.ancestors(anchor)].filter(
+    const domModule = [...dom5.ancestors(anchor)].filter(
         dom5.predicates.hasTagName('dom-module'))[0];
     assert(domModule);
-    const theLinkIsNotAnAncestor = [...dom5.iteration.ancestors(anchor)].filter(
+    const theLinkIsNotAnAncestor = [...dom5.ancestors(anchor)].filter(
         dom5.predicates.hasTagName('link'))[0];
     assert.equal(theLinkIsNotAnAncestor, undefined);
   });
@@ -71,16 +71,16 @@ suite('iteration', () => {
 
     // 'sample element' text node
     let expected = templateContent.childNodes![4];
-    let actual = [
-      ...dom5.iteration.depthFirst(doc, dom5.childNodesIncludeTemplate)
-    ].filter(textNode)[0];
+    let actual =
+        [...dom5.depthFirst(doc, dom5.childNodesIncludeTemplate)].filter(
+            textNode)[0];
     assert.equal(actual, expected);
 
     // <!-- comment node -->
     expected = templateContent.childNodes![5];
-    actual = [
-      ...dom5.iteration.depthFirst(template, dom5.childNodesIncludeTemplate)
-    ].filter(dom5.isCommentNode)[0];
+    actual =
+        [...dom5.depthFirst(template, dom5.childNodesIncludeTemplate)].filter(
+            dom5.isCommentNode)[0];
     assert.equal(actual, expected);
   });
 
@@ -90,7 +90,7 @@ suite('iteration', () => {
         dom5.predicates.hasAttrValue('rel', 'import'),
         dom5.predicates.hasAttr('href'));
     const expected = doc.childNodes![1].childNodes![0].childNodes![0];
-    const actual = dom5.iteration.query(doc, fn);
+    const actual = dom5.query(doc, fn);
     assert.equal(actual, expected);
   });
 
@@ -104,10 +104,9 @@ suite('iteration', () => {
     // subtract one to get "gap" number
     const expected = serializedDoc.split('\n').length - 1;
     // add two for normalized text node "\nsample text\n"
-    const actual =
-        [...dom5.iteration.depthFirst(doc, dom5.childNodesIncludeTemplate)]
-            .filter(empty)
-            .length +
+    const actual = [...dom5.depthFirst(doc, dom5.childNodesIncludeTemplate)]
+                       .filter(empty)
+                       .length +
         2;
 
     assert.equal(actual, expected);
@@ -129,8 +128,7 @@ suite('iteration', () => {
     const expected_1 = templateContent.childNodes![1];
     // anchor
     const expected_2 = templateContent.childNodes![3];
-    const actual =
-        [...dom5.iteration.queryAll(doc, fn, dom5.childNodesIncludeTemplate)];
+    const actual = [...dom5.queryAll(doc, fn, dom5.childNodesIncludeTemplate)];
 
     assert.equal(actual.length, 3);
     assert.equal(actual[0], expected_1);
@@ -147,10 +145,9 @@ suite('iteration', () => {
     });
 
     test('prior', () => {
-      const domModule = dom5.iteration.query(
-          doc, dom5.predicates.hasAttrValue('id', 'test-element'))!;
-      const comments =
-          [...dom5.iteration.prior(domModule)].filter(dom5.isCommentNode);
+      const domModule =
+          dom5.query(doc, dom5.predicates.hasAttrValue('id', 'test-element'))!;
+      const comments = [...dom5.prior(domModule)].filter(dom5.isCommentNode);
       assert.include(dom5.getTextContent(comments[0]), 'test element');
       assert.include(
           dom5.getTextContent(comments[1]), 'hash or path based routing');

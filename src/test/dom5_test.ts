@@ -583,21 +583,21 @@ suite('dom5', () => {
       const node = dom5.constructors.text('test');
       assert.isTrue(dom5.isTextNode(node));
       const fn = dom5.predicates.hasTextValue('test');
-      assert.equal(dom5.walking.nodeWalk(node, fn), node);
+      assert.equal(dom5.nodeWalk(node, fn), node);
     });
 
     test('comment node', () => {
       const node = dom5.constructors.comment('test');
       assert.isTrue(dom5.isCommentNode(node));
       const fn = dom5.predicates.hasTextValue('test');
-      assert.equal(dom5.walking.nodeWalk(node, fn), node);
+      assert.equal(dom5.nodeWalk(node, fn), node);
     });
 
     test('element', () => {
       const node = dom5.constructors.element('div');
       assert.isTrue(dom5.isElement(node));
       const fn = dom5.predicates.hasTagName('div');
-      assert.equal(dom5.walking.query(node, fn), node);
+      assert.equal(dom5.query(node, fn), node);
     });
   });
 
