@@ -14,7 +14,7 @@ import * as parse5 from 'parse5';
 
 import * as dom5 from '../index';
 
-/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
+/// <reference path="mocha" />
 
 suite('dom5', () => {
 

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+ * Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt The complete set of authors may be found
  * at http://polymer.github.io/AUTHORS.txt The complete set of contributors may
@@ -17,7 +17,7 @@ import * as path from 'path';
 import * as dom5 from '../index';
 import {fixturesDir} from './utils';
 
-/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
+/// <reference path="mocha" />
 
 suite('walking', () => {
   const docText: string = `

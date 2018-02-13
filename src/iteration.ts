@@ -37,7 +37,7 @@ export function*
 /**
  * Yields `node` and all of its children, recursively.
  *
- * Yields `node` first, yields emits each descendent in depth first order.
+ * Yields `node` first, then yields each descendent in depth first order.
  */
 export function*
     depthFirst(node: Node, getChildNodes: GetChildNodes = defaultChildNodes):
