@@ -15,3 +15,4 @@ export * from './modification';
 export * from './predicates';
 export * from './util';
 export * from './walking';
+export * from './iteration';
